@@ -1,0 +1,22 @@
+{
+  "name": "Kasam Workspace",
+  "image": "kasmweb/core-ubuntu-jammy:1.16.0",
+  "forwardPorts": [6901],
+  "postStartCommand": "bash -c '/dockerstartup/kasm_startup.sh & nohup /usr/local/bin/inactivity-monitor.sh > /tmp/kasam-idle.log 2>&1 &'",
+  "remoteUser": "kasm_user",
+  "overrideCommand": false,
+  "runArgs": ["--shm-size=512m"],
+  "containerEnv": {
+    "VNC_PW": "codespaces",
+    "PUID": "1000",
+    "PGID": "1000"
+  },
+  "customizations": {
+    "codespaces": {
+      "openOnContainerStartup": true,
+      "rebuildOnConfigChange": true
+    }
+  },
+  "features": {},
+  "mounts": []
+}
