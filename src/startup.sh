@@ -1,224 +1,198 @@
 #!/bin/bash
 
-# Kasam Workspace Startup Script
-# Displays welcome banner, system info, and idle timer status
+# Kasam Workspace Startup Banner and System Information
+# Displays welcome message, available tools, and system status
 
-set -e
-
-# Color codes
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
-# ASCII Banner
+# Clear screen
+clear
+
+# Display ASCII art banner
 echo -e "${CYAN}"
 cat << "EOF"
-╔════════════════════════════════════════════════════════════╗
-║                                                            ║
-║     ██╗  ██╗ █████╗ ███████╗ █████╗ ███╗   ███╗          ║
-║     ██║ ██╔╝██╔══██╗██╔════╝██╔══██╗████╗ ████║          ║
-║     █████╔╝ ███████║███████╗███████║██╔████╔██║          ║
-║     ██╔═██╗ ██╔══██║╚════██║██╔══██║██║╚██╔╝██║          ║
-║     ██║  ██╗██║  ██║███████║██║  ██║██║ ╚═╝ ██║          ║
-║     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝          ║
-║                                                            ║
-║     Browser-Based Linux Desktop for Cybersecurity         ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                    🛡️  KASAM WORKSPACE READY  🛡️                          ║
+║                                                                            ║
+║             Browser-Based Linux Desktop for Cybersecurity Labs            ║
+║                   Powered by KasmVNC + GitHub Codespaces                   ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
 EOF
 echo -e "${NC}"
 
-echo -e "${GREEN}[✓] Kasam Workspace Ready${NC}"
+echo ""
+echo -e "${GREEN}✓ WORKSPACE INITIALIZATION COMPLETE${NC}"
 echo ""
 
 # VNC Access Information
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${YELLOW}KasmVNC Desktop Access:${NC}"
-echo -e "${CYAN}  Port:       6901${NC}"
-echo -e "${CYAN}  Username:   kasm_user${NC}"
-echo -e "${CYAN}  Password:   codespaces${NC}"
-echo -e "${CYAN}  URL:        https://\$CODESPACE_NAME.preview.app.github.dev:6901${NC}"
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}📺 KASMVNC DESKTOP ACCESS${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "  ${WHITE}Port:${NC} 6901 (KasmVNC Streaming)"
+echo -e "  ${WHITE}Username:${NC} kasm_user"
+echo -e "  ${WHITE}Password:${NC} codespaces"
+echo -e "  ${WHITE}Resolution:${NC} 1920x1080 (configurable)"
+echo -e "  ${WHITE}Browser URL:${NC} https://<codespace>.preview.app.github.dev:6901"
 echo ""
 
-# Auto-shutdown Feature
-echo -e "${MAGENTA}Auto-Shutdown Configuration:${NC}"
-echo -e "${YELLOW}  Timeout:    15 minutes (900 seconds) of inactivity${NC}"
-echo -e "${YELLOW}  Warning:    60 seconds before shutdown${NC}"
-echo -e "${YELLOW}  Monitor:    Tracks mouse/keyboard activity${NC}"
-echo -e "${YELLOW}  Logs:       /tmp/kasam-idle.log${NC}"
+# Auto-shutdown information
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}⏱️  AUTO-SHUTDOWN FEATURE${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "  ${WHITE}Idle Timeout:${NC} 15 minutes (900 seconds)"
+echo -e "  ${WHITE}Warning Time:${NC} 60 seconds before shutdown"
+echo -e "  ${WHITE}Activity Detection:${NC} X11 mouse/keyboard monitoring"
+echo -e "  ${WHITE}Shutdown Command:${NC} Graceful system halt"
+echo -e "  ${WHITE}Activity Log:${NC} /tmp/kasam-idle.log"
+echo ""
+echo -e "  ${MAGENTA}💡 Tip: Move your mouse or press a key to reset the idle timer${NC}"
 echo ""
 
-# Check if inactivity monitor is running
-if pgrep -f "inactivity-monitor.sh" > /dev/null; then
-    echo -e "${GREEN}[✓] Inactivity Monitor: RUNNING${NC}"
-    IDLE_LOG="/tmp/kasam-idle.log"
-    if [ -f "$IDLE_LOG" ]; then
-        LAST_STATUS=$(tail -1 "$IDLE_LOG" 2>/dev/null | grep -oP 'Idle \K[0-9]+' || echo "N/A")
-        echo -e "${CYAN}    Last Status: ${LAST_STATUS}s idle${NC}"
-        echo -e "${CYAN}    View logs: tail -f /tmp/kasam-idle.log${NC}"
-    fi
-else
-    echo -e "${RED}[✗] Inactivity Monitor: NOT RUNNING${NC}"
-    echo -e "${YELLOW}    Start manually: nohup /usr/local/bin/inactivity-monitor.sh &${NC}"
-fi
+# Installed Tools
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}🔧 INSTALLED CYBERSECURITY TOOLS${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# Installed Tools Section
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${MAGENTA}Installed Cybersecurity Tools:${NC}"
-echo ""
+tools=(
+    "nmap:Network reconnaissance and port scanning"
+    "wireshark-common:Packet analysis and network debugging"
+    "john:Password cracking with dictionary attacks"
+    "hashcat:GPU-accelerated hash cracking"
+    "sqlmap:Automated SQL injection vulnerability testing"
+    "gobuster:Web directory and subdomain brute-forcing"
+    "hydra:Multi-protocol credential brute-force tool"
+    "netcat-openbsd:Network utility for connections and transfers"
+    "curl:HTTP client for API testing and data transfer"
+    "git:Version control system"
+    "htop:Interactive system process and resource monitor"
+    "neofetch:System information display utility"
+)
 
-# Function to check tool availability and display status
-check_tool() {
-    local tool=$1
-    local description=$2
+for tool_info in "${tools[@]}"; do
+    tool_name="${tool_info%%:*}"
+    tool_desc="${tool_info#*:}"
     
-    if command -v "$tool" &> /dev/null; then
-        VERSION=$(eval "$tool --version 2>&1 | head -1" 2>/dev/null || echo "")
-        printf "  ${GREEN}[✓]${NC} %-15s - ${CYAN}%s${NC}\n" "$tool" "$description"
+    if command -v "${tool_name}" >/dev/null 2>&1; then
+        echo -e "  ${GREEN}✓${NC} ${WHITE}${tool_name}${NC} - ${tool_desc}"
     else
-        printf "  ${RED}[✗]${NC} %-15s - ${CYAN}%s${NC}\n" "$tool" "$description"
+        echo -e "  ${RED}✗${NC} ${WHITE}${tool_name}${NC} - ${tool_desc} (NOT FOUND)"
     fi
-}
-
-# Network Tools
-echo -e "${YELLOW}Network & Reconnaissance:${NC}"
-check_tool "nmap" "Port scanning, service enumeration"
-check_tool "netcat" "Banner grabbing, port listening"
-check_tool "curl" "HTTP requests, API testing"
-
-# Web Testing
-echo ""
-echo -e "${YELLOW}Web Application Testing:${NC}"
-check_tool "sqlmap" "SQL injection vulnerability scanning"
-check_tool "gobuster" "Path & subdomain enumeration"
-check_tool "wireshark" "Packet capture & analysis"
-
-# Credential Attacks
-echo ""
-echo -e "${YELLOW}Password Cracking & Brute-force:${NC}"
-check_tool "hydra" "Online credential brute-force"
-check_tool "john" "Password cracking (CPU)"
-check_tool "hashcat" "Hash cracking (GPU-accelerated)"
-
-# System Utilities
-echo ""
-echo -e "${YELLOW}System & Utilities:${NC}"
-check_tool "git" "Version control"
-check_tool "htop" "Process monitoring"
-check_tool "neofetch" "System information"
+done
 
 echo ""
 
 # System Information
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${MAGENTA}System Information:${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}💻 SYSTEM INFORMATION${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# CPU Info
-CPU_MODEL=$(grep "model name" /proc/cpuinfo | head -1 | cut -d':' -f2 | xargs)
-CPU_CORES=$(nproc)
-echo -e "  ${CYAN}CPU:${NC}        $CPU_MODEL ($CPU_CORES cores)"
+# CPU Information
+if [ -f /proc/cpuinfo ]; then
+    cpu_count=$(grep -c processor /proc/cpuinfo)
+    cpu_model=$(grep -m 1 'model name' /proc/cpuinfo | cut -d':' -f2 | xargs)
+    echo -e "  ${WHITE}CPU:${NC} $cpu_model (${cpu_count} cores)"
+fi
 
-# Memory Info
-TOTAL_MEM=$(free -h | grep Mem | awk '{print $2}')
-AVAIL_MEM=$(free -h | grep Mem | awk '{print $7}')
-echo -e "  ${CYAN}Memory:${NC}     $TOTAL_MEM total (${AVAIL_MEM} available)"
+# Memory Information
+if command -v free >/dev/null 2>&1; then
+    total_mem=$(free -h | awk 'NR==2 {print $2}')
+    available_mem=$(free -h | awk 'NR==2 {print $7}')
+    echo -e "  ${WHITE}Memory:${NC} ${available_mem} available of ${total_mem} total"
+fi
 
-# Disk Info
-DISK_TOTAL=$(df -h / | tail -1 | awk '{print $2}')
-DISK_USED=$(df -h / | tail -1 | awk '{print $3}')
-DISK_AVAIL=$(df -h / | tail -1 | awk '{print $4}')
-echo -e "  ${CYAN}Disk:${NC}       $DISK_TOTAL ($DISK_USED used, $DISK_AVAIL available)"
+# Disk Information
+if command -v df >/dev/null 2>&1; then
+    disk_usage=$(df -h / | awk 'NR==2 {print $4 " available of " $2}')
+    echo -e "  ${WHITE}Disk:${NC} ${disk_usage}"
+fi
 
 # Uptime
-UPTIME=$(uptime -p | sed 's/up //')
-echo -e "  ${CYAN}Uptime:${NC}     $UPTIME"
+if command -v uptime >/dev/null 2>&1; then
+    uptime_info=$(uptime -p 2>/dev/null || uptime | awk -F'up' '{print $2}' | cut -d',' -f1)
+    echo -e "  ${WHITE}Uptime:${NC} ${uptime_info}"
+fi
 
-# OS Info
-OS_INFO=$(cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2)
-echo -e "  ${CYAN}OS:${NC}        $OS_INFO"
-
-echo ""
-
-# Quick Start Guide
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${MAGENTA}Quick Start Commands:${NC}"
-echo ""
-echo -e "  ${YELLOW}1. Open Desktop:${NC}"
-echo -e "     Access port 6901 in your browser (see VNC info above)"
-echo ""
-echo -e "  ${YELLOW}2. Network Scan:${NC}"
-echo -e "     ${CYAN}nmap -p- -sV 192.168.0.0/24${NC}"
-echo ""
-echo -e "  ${YELLOW}3. SQL Injection Test:${NC}"
-echo -e "     ${CYAN}sqlmap -u 'http://target.com/page?id=1' --dbs${NC}"
-echo ""
-echo -e "  ${YELLOW}4. Brute-force Credentials:${NC}"
-echo -e "     ${CYAN}hydra -l admin -P passwords.txt ssh://target.com${NC}"
-echo ""
-echo -e "  ${YELLOW}5. Monitor Idle Time:${NC}"
-echo -e "     ${CYAN}tail -f /tmp/kasam-idle.log${NC}"
-echo ""
-
-# Idle Timer Status
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${MAGENTA}Idle Timer Status:${NC}"
-echo ""
-if [ -f "/tmp/kasam-idle.log" ]; then
-    MONITOR_PID=$(pgrep -f "inactivity-monitor.sh" || echo "N/A")
-    echo -e "  ${CYAN}Monitor PID:${NC}       $MONITOR_PID"
-    echo -e "  ${CYAN}Log Location:${NC}     /tmp/kasam-idle.log"
-    echo -e "  ${CYAN}Current Time:${NC}     $(date '+%Y-%m-%d %H:%M:%S')"
-    
-    if [ -f "/tmp/kasam-idle.log" ]; then
-        LAST_LOG=$(tail -1 /tmp/kasam-idle.log 2>/dev/null)
-        echo -e "  ${CYAN}Last Log Entry:${NC}   $LAST_LOG"
-    fi
-else
-    echo -e "  ${YELLOW}Monitor log not yet created. Monitor starting...${NC}"
+# OS Information
+if [ -f /etc/os-release ]; then
+    os_version=$(grep '^VERSION=' /etc/os-release | cut -d'=' -f2 | xargs)
+    os_name=$(grep '^NAME=' /etc/os-release | cut -d'=' -f2 | xargs)
+    echo -e "  ${WHITE}OS:${NC} ${os_name} ${os_version}"
 fi
 
 echo ""
 
-# Ethical Disclaimer
-echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${RED}ETHICAL HACKING DISCLAIMER${NC}"
-echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
+# Quick Start Commands
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}⚡ QUICK START COMMANDS${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo -e "${YELLOW}⚠️  AUTHORIZED USE ONLY${NC}"
+echo -e "  ${WHITE}1. Check idle timer status:${NC}"
+echo -e "     ps aux | grep inactivity-monitor"
 echo ""
-echo -e "The tools in this workspace are powerful and can cause harm if misused."
+echo -e "  ${WHITE}2. View activity logs:${NC}"
+echo -e "     tail -f /tmp/kasam-idle.log"
 echo ""
-echo -e "${GREEN}DO:${NC}"
-echo -e "  ✓ Test systems you own"
-echo -e "  ✓ Test with explicit written authorization"
-echo -e "  ✓ Use for authorized security assessments"
-echo -e "  ✓ Report vulnerabilities responsibly"
+echo -e "  ${WHITE}3. Display system info:${NC}"
+echo -e "     neofetch"
 echo ""
-echo -e "${RED}DON'T:${NC}"
-echo -e "  ✗ Test systems without permission"
-echo -e "  ✗ Exceed authorization scope"
-echo -e "  ✗ Leave backdoors or damage systems"
-echo -e "  ✗ Disclose vulnerabilities publicly without notice"
+echo -e "  ${WHITE}4. Monitor system resources:${NC}"
+echo -e "     htop"
 echo ""
-echo -e "Unauthorized access is ${RED}ILLEGAL${NC} and punishable by law."
-echo ""
-echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
+echo -e "  ${WHITE}5. Perform network scan:${NC}"
+echo -e "     nmap -sn 192.168.1.0/24"
 echo ""
 
-# Footer
-echo -e "${CYAN}For detailed setup instructions, see README.md${NC}"
-echo -e "${CYAN}For development guidelines, see .github/copilot-instructions.md${NC}"
+# Idle Monitor Status
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}📊 IDLE MONITOR STATUS${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║  Kasam is ready for secure, authorized testing.           ║${NC}"
-echo -e "${GREEN}║  Safe hacking practices make the internet safer for all.  ║${NC}"
-echo -e "${GREEN}╚════════════════════════════════════════════════════════════╝${NC}"
+
+if pgrep -f "inactivity-monitor.sh" > /dev/null; then
+    monitor_pid=$(pgrep -f "inactivity-monitor.sh" | head -1)
+    echo -e "  ${GREEN}✓ Inactivity Monitor Running${NC}"
+    echo -e "  ${WHITE}PID:${NC} $monitor_pid"
+    
+    if [ -f /tmp/kasam-idle.log ]; then
+        last_check=$(tail -1 /tmp/kasam-idle.log)
+        echo -e "  ${WHITE}Last Activity Check:${NC} $last_check"
+    fi
+else
+    echo -e "  ${RED}✗ Inactivity Monitor NOT Running${NC}"
+    echo -e "  ${YELLOW}Start manually: /usr/local/bin/inactivity-monitor.sh &${NC}"
+fi
+
+echo ""
+
+# Ethical Hacking Disclaimer
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${RED}⚠️  ETHICAL HACKING DISCLAIMER${NC}"
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "  ${WHITE}This workspace is for AUTHORIZED security testing ONLY.${NC}"
+echo ""
+echo -e "  ${YELLOW}✓ Use only on systems you own or have explicit permission to test${NC}"
+echo -e "  ${YELLOW}✓ All security tools must be used legally and responsibly${NC}"
+echo -e "  ${YELLOW}✓ Unauthorized access to computer systems is a federal crime${NC}"
+echo -e "  ${YELLOW}✓ Report vulnerabilities through proper disclosure channels${NC}"
+echo ""
+echo -e "  ${WHITE}Violating this disclaimer may result in criminal prosecution.${NC}"
+echo ""
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${CYAN}Ready to begin your authorized security testing! 🚀${NC}"
 echo ""
